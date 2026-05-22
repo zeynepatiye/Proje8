@@ -29,6 +29,12 @@ public class Elements {
     public WebElement registerAssert;
     @FindBy(css= "[type='checkbox']")
     public WebElement dogrulama;
+    @FindBy(className = "button-1 register-continue-button")
+    public WebElement continueButton;
+    @FindBy(className = "ico-logout")
+    public WebElement logOut    ;
+
+
 
 
 
