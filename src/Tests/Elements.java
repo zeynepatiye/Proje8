@@ -1,6 +1,7 @@
 package Tests;
 
 import Utility.BaseDriver;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -33,6 +34,9 @@ public class Elements {
     public WebElement continueButton;
     @FindBy(className = "ico-logout")
     public WebElement logOut    ;
+    @FindBy(xpath = "(//button[@type='submit'])[2]")
+    public WebElement logInBtn    ;
+
 
 
 

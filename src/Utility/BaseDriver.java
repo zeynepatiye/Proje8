@@ -1,7 +1,9 @@
 package Utility;
 
 import Utility.MyFunc;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -12,6 +14,7 @@ import org.testng.annotations.BeforeClass;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BaseDriver {
@@ -49,4 +52,25 @@ public class BaseDriver {
         driver.get("https://demo.nopcommerce.com/login?returnUrl=%2F");
     }
 
+
+    // hafızada kalmış, Selenium açtığı boştaki tarayıcıları temizler
+    public static void KalanOncekileriKapat() {
+        try {  // aga komuta bak.. cmd den taskkill yapıyu Runtime.getRuntime().exec("taskkill /f /im Kalanononcekileri");
+            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe /T");
+        } catch (Exception ignored) {
+        }
+    }
+
+    public static void Consent(){
+        // Consent buttonu bulurken list<> web elements olarak buluyoruz.. Çünkü tek elemanı bulamayabilir. Bulamazsa hata bverir..
+        List<WebElement> ConsentButton=driver.findElements(By.xpath("//*[text()='Consent']"));
+        if (ConsentButton.size()>0)     // Consent ekranda gözüktüyse
+            ConsentButton.get(0).click();
+
+    }
+    public static void BekleKapat()
+    {
+        MyFunc.bekle(3);
+        driver.quit();
+    }
 }
