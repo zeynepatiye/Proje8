@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Testler extends BaseDriver{
+  //  Elements elements=new Elements();
 //    @Test(priority = 1)
 //    public void RegisterTesti(){
 //        Elements elements=new Elements();
@@ -49,13 +50,16 @@ public class Testler extends BaseDriver{
     }
 
 
-    @Test(dataProvider = "datalarim")//priority eklenecek
+    @Test(dataProvider = "datalarim" , priority = 3)//priority ??
     public void DataProviderTest(){
+     Elements elements=new Elements();
+        elements.logInBtn.click();
         WebElement email= driver.findElement(By.id("Email"));
         email.sendKeys("sevgidereli@gmail.com");
         WebElement password=driver.findElement(By.id("Password"));
         password.sendKeys("123456");
     }
+
 //    public void DataProviderLogInTest(String email, String password)
 //    {
 //
@@ -63,11 +67,10 @@ public class Testler extends BaseDriver{
 //        BekleKapat();
 //    }
 
-    // Login butonuna tıklayınız
-    // Geçerli ve geçersiz Email ve password’u Data Provider metodundan aliniz
-    // LOG IN butonunna tıklayınız
-    // başarılı bir şekilde login olup olmadığınızı doğrulayınız.
-
+//     Login butonuna tıklayınız
+// Geçerli ve geçersiz Email ve password’u Data Provider metodundan aliniz
+// LOG IN butonunna tıklayınız
+// başarılı bir şekilde login olup olmadığınızı doğrulayınız.
 
 
     @DataProvider

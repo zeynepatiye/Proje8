@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<suite name="mySuit" parallel="tests" thread-count="2">
+    <test name="dataProviderLogIn">
+        <parameter name="Email" value="sevgidereli@gmail.com"></parameter>
+        <parameter name="password" value="123456"></parameter>
+        <classes>
+            <class name="Tests.Testler"></class>
+        </classes>
+    </test>
+    <test name="dataProviderLogIn2">
+        <parameter name="Email" value="zeyneppar@gmail.com"></parameter>
+        <parameter name="password" value="567890"></parameter>
+        <classes>
+            <class name="Tests.Testler"></class>
+        </classes>
+    </test>
+
+
+
+</suite>
