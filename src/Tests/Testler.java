@@ -68,16 +68,42 @@ public class Testler extends BaseDriver {
         BekleKapat();
     }
 
+    @Test(dataProvider = "datalarim")
+    public void DataProviderLoginTest(String emailAdresi, String sifre, boolean isSuccess) {
+
+        MyFunc.bekle(10);
+
+        WebElement email = driver.findElement(By.id("Email"));
+        email.clear();
+        email.sendKeys(emailAdresi);
+
+        WebElement password = driver.findElement(By.id("Password"));
+        password.clear();
+        password.sendKeys(sifre);
+
+        WebElement loginBtn = driver.findElement(By.xpath("//button[contains(text(),'Log in')]"));
+        loginBtn.click();
+
+        if (isSuccess) {
+            WebElement logoutBtn = driver.findElement(By.className("ico-logout"));
+            Assert.assertTrue(logoutBtn.isDisplayed(), "Giriş başarılı!");
+        } else {
+            WebElement errorMsg = driver.findElement(By.cssSelector(".message-error"));
+            Assert.assertTrue(errorMsg.getText().contains("Login was unsuccessful"), "Giriş başarısız!");
+        }
+    }
+
     @DataProvider
     public Object[][] datalarim() {
 
         Object[][] loginVerileri = {
-                {"testkullanicisi@gmail.com", "123456", true},        // Geçerli veri
+                {"sevgidereli@gmail.com", "123456", true},        // Geçerli veri
                 {"gecersiz_email@gmail.com", "yanlis123", false}  // Geçersiz veri
         };
 
         return loginVerileri;
     }
+}
 
 
     @Test(dependsOnMethods = {"DataProviderLoginTest"})
