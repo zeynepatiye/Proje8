@@ -4,74 +4,69 @@ import Utility.BaseDriver;
 import Utility.MyFunc;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class Testler extends BaseDriver{
-  //  Elements elements=new Elements();
-//    @Test(priority = 1)
-//    public void RegisterTesti(){
-//        Elements elements=new Elements();
-//        LocalDateTime dt = LocalDateTime.now();
-//        DateTimeFormatter format = DateTimeFormatter.ofPattern("ddMMyyyyhhmmss");
-////
-//        elements.genderFemale.click();
-//        elements.firstName.sendKeys("selen");
-//        elements.lastName.sendKeys("testici");
-//        elements.email.sendKeys("selen.testici"+dt.format(format)+ "@gmail.com");
-//        elements.password.sendKeys("123123");
-//        elements.confirmPassword.sendKeys("123123");
-//        elements.registerButton.click();
-//        bekle.until(ExpectedConditions.elementToBeClickable(elements.dogrulama));
-//        elements.dogrulama.click();
-//        bekle.until(ExpectedConditions.visibilityOf(elements.registerAssert));
-//        Assert.assertEquals(elements.registerAssert.getText(), "Your registration completed", "Hatalı register uygulaması.");
-//
+public class Testler extends BaseDriver {
+    Elements elements = new Elements();
 
+    @Test(priority = 1)
+    public void RegisterTest() {
+        LocalDateTime dt = LocalDateTime.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("ddMMyyyyhhmmss");
 
+        elements.genderFemale.click();
+        elements.firstName.sendKeys("test");
+        elements.lastName.sendKeys("kullanicisi");
+        elements.email.sendKeys("testkullanicisi" + dt.format(format) + "@gmail.com");
+        elements.password.sendKeys("123456");
+        elements.confirmPassword.sendKeys("123456");
+        elements.registerButton.click();
+        bekle.until(ExpectedConditions.elementToBeClickable(elements.dogrulama));
+        elements.dogrulama.click();
+        bekle.until(ExpectedConditions.visibilityOf(elements.registerAssert));
+        Assert.assertEquals(elements.registerAssert.getText(), "Your registration completed", "Hatalı register uygulaması.");
+        BekleKapat();
 
-//    }
-    @Test(priority = 2)
-    public void LoginTest()
-    {
-        WebElement email= driver.findElement(By.id("Email"));
-        email.sendKeys("sevgidereli@gmail.com");
-        WebElement password=driver.findElement(By.id("Password"));
-        password.sendKeys("123456");
-        WebElement loginBtn= driver.findElement(By.xpath("(//button[@type='submit'])[2]"));
-        loginBtn.click();
+    }
+
+    @Test(dependsOnMethods = {"RegisterTest"})
+    public void LoginTest() {
+        MyFunc.bekle(10); // bot için kullanıldı
+        elements.email.sendKeys("testkullanicisi@gmail.com");
+        elements.password.sendKeys("123456");
+        elements.logInBtn.click();
         BekleKapat();
 
     }
 
 
-    @Test(dataProvider = "datalarim" , priority = 3)//priority ??
-    public void DataProviderTest(){
-     Elements elements=new Elements();
+    @Test(dataProvider = "datalarim", dependsOnMethods = {"LoginTest"})
+    public void DataProviderLoginTest(String emailAdresi, String sifre, boolean esittir) {
+        MyFunc.bekle(10); // bot için kullanıldı
+        elements.email.clear();
+        elements.email.sendKeys(emailAdresi);
+        elements.password.clear();
+        elements.password.sendKeys(sifre);
         elements.logInBtn.click();
-        WebElement email= driver.findElement(By.id("Email"));
-        email.sendKeys("sevgidereli@gmail.com");
-        WebElement password=driver.findElement(By.id("Password"));
-        password.sendKeys("123456");
+
+        if (esittir) {
+            Assert.assertTrue(elements.logOut.isDisplayed(), "Giriş başarılı!");
+        } else {
+            Assert.assertTrue(elements.errorMsg.getText().contains("Login was unsuccessful"), "Giriş başarısız!");
+        }
+        BekleKapat();
     }
-
-//    public void DataProviderLogInTest(String email, String password)
-//    {
-//
-//        System.out.println(email+" - "+password+" ");
-//        BekleKapat();
-//    }
-
-//     Login butonuna tıklayınız
-// Geçerli ve geçersiz Email ve password’u Data Provider metodundan aliniz
-// LOG IN butonunna tıklayınız
-// başarılı bir şekilde login olup olmadığınızı doğrulayınız.
-
 
     @Test(dataProvider = "datalarim")
     public void DataProviderLoginTest(String emailAdresi, String sifre, boolean isSuccess) {
@@ -111,41 +106,78 @@ public class Testler extends BaseDriver{
 }
 
 
-    @Test (priority = 4)
-    public void TabMenuTest (){
-
-
-
-
-
-
+    @Test(dependsOnMethods = {"DataProviderLoginTest"})
+    public void TabMenuTest() {
+        MyFunc.bekle(15); // bot için yapıldı
+        List<String> olusanTabMenu = new ArrayList<>();
+        for (WebElement element : elements.tabMenu) {
+            olusanTabMenu.add(element.getText().trim());
+        }
+        List<String> beklenenTabMenu = Arrays.asList(
+                "Computers",
+                "Electronics",
+                "Apparel",
+                "Digital downloads",
+                "Books",
+                "Jewelry",
+                "Gift Cards"
+        );
+        Assert.assertEquals(olusanTabMenu, beklenenTabMenu, "Tab menüdeki oluşan ürün isimleri beklendiği gibi değil.");
+        BekleKapat();
     }
-    @Test (priority = 5)
-    public void OrderGiftsTest (){
 
+    @Test(dependsOnMethods = {"TabMenuTest"})
+    public void OrderGiftsTest() {
+        Elements elements = new Elements();
+        elements.giftCard.click();
+        int rndSayi = MyFunc.randomSayiUret(elements.physicalGiftsList.size() - 1);//0,1,2,3
+        String secilenUrunAdi = elements.physicalGiftsList.get(rndSayi).getText(); // ürün adı alındı
+        elements.addToCartBtn.get(rndSayi).click();//Seçilen ürünün add to cart butonuna tıklattım
+        elements.recipientName.sendKeys("Test1");
+        elements.senderName.sendKeys("Test2");
+        elements.giftCardmessage.sendKeys("testtesttesttesttest");
+        bekle.until(ExpectedConditions.elementToBeClickable(elements.addToCartSend)).click();
+        elements.shoppingCart.click();
+        boolean bulundu = false;
+        for (WebElement urun : elements.physicalGiftsList)
+            if (urun.getText().equals(secilenUrunAdi)) {
+                bulundu = true;
+                break;
+            }
 
-
-
-
-
+        if (!bulundu)
+            Assert.fail("Add To Cart'a eklenen ürün listede bulunamadı.");
+        BekleKapat();
     }
-    @Test (priority = 6)
-    public void OrderComputerTest (){
 
 
-
-
-
-
+    @Test(dependsOnMethods = {"OrderGiftsTest"})
+    public void OrderComputerTest() {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(elements.computers).perform();
+        Select cmpDropdown = new Select(elements.computersDropdown);
+        cmpDropdown.selectByVisibleText("desktops");
+        elements.desktops.click();
+        elements.buYourOwnComp.click();
+        Select ramSelect = new Select(elements.randomRam);
+        List<WebElement> ramOptions = ramSelect.getOptions();
+        int randomRamIndex = MyFunc.randomSayiUret(ramOptions.size() - 1) + 1;
+        ramSelect.selectByIndex(randomRamIndex);
+        List<WebElement> hddOptions = elements.hddRadioButtons;
+        int randomHddIndex = MyFunc.randomSayiUret(hddOptions.size());
+        hddOptions.get(randomHddIndex).click();
+        elements.addToCartComputer.click();
+        Assert.assertTrue(elements.computerTestDogrulama.isDisplayed(), "Ürün sepete eklenemedi.");
+        BekleKapat();
     }
-    @Test (priority = 7)
-    public void ParametreliSearchTest (){
 
-
-
+    @Test(dependsOnMethods = {"OrderComputerTest"})
+    public void ParametreliSearchTest() {
 
         BekleKapat();
 
     }
-
 }
+
+
+
