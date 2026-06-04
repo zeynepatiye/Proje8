@@ -27,7 +27,7 @@ public class BaseDriver {
         prefs.put("profile.password_manager_leak_detection", false); // "şifren sızdı değiştir" uyarısı kapalı
 
         options.setExperimentalOption("prefs", prefs);
-        driver = new EdgeDriver();
+        driver = new ChromeDriver();
         driver.manage().window().maximize(); // Ekranı max yapıyor.
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30)); // 30 sn mühlet: sayfayı yükleme mühleti
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // 5 sn mühlet: elementi bulma mühleti
@@ -35,10 +35,10 @@ public class BaseDriver {
         driver.get("https://demo.nopcommerce.com/register?returnUrl=%2F");
     }
 
-//    @AfterClass
-//    public void TearDown() {
-//        MyFunc.bekle(3);
-//        driver.quit();
-//    }
+    @AfterClass
+    public void BekleKapat() {
+        MyFunc.bekle(3);
+        driver.quit();
+    }
 
 }
